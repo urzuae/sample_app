@@ -1,0 +1,18 @@
+login: &login
+  adapter: mysql
+  encoding: utf8
+  pool: 5
+  user: root
+  password: password
+
+development:
+  <<: *login
+  database: sample_app_development
+
+test:
+  <<: *login
+  database: sample_app_test
+
+production:
+  <<: *login
+  database: sample_app
