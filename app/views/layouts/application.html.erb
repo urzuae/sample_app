@@ -9,6 +9,9 @@
     <div class="container">
       <%= render 'layouts/header'%>
       <div id="content" class="round">
+        <% flash.each do |key, value| %>
+          <%= content_tag(:div, value, :class => "flash #{key}") %>
+        <% end %>
         <%= yield %>
       </div>
       <%= render 'layouts/footer' %>

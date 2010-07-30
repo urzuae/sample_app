@@ -127,3 +127,20 @@ td.sidebar {
   border: solid 1px #999;
   margin-bottom: -15px;
 }
+
+div.field, div.actions {
+  margin-bottom: 10px;
+}
+
+.fieldWithErrors input {
+  border: solid 1px red;
+  background-color: #FFFF77;
+}
+
+ul.users {
+  margin-top: 1em;
+}
+
+.users li {
+  list-style: none;
+}

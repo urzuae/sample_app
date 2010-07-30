@@ -118,4 +118,47 @@ describe User do
       end
     end
   end
+  
+  describe "remember me" do
+    
+    before(:each) do
+      @user = User.create!(@attributes)
+    end
+    
+    it "should have a remember token" do
+      @user.should respond_to(:remember_token)
+    end
+    
+    it "should have a remember_me! method" do
+      @user.should respond_to(:remember_me!)
+    end
+    
+    it "should set the remember token" do
+      @user.remember_me!
+      @user.remember_token.should_not be_nil
+    end
+    
+  end
+  
+  describe "admin attribute" do
+    
+    before(:each) do
+      @user = User.create!(@attributes)
+    end
+    
+    it "should respond to admin" do
+      @user.should respond_to(:admin)
+    end
+    
+    it "should not be an admin by default" do
+      @user.should_not be_admin
+    end
+    
+    it "should be convertible to an admin" do
+      @user.toggle!(:admin)
+      @user.should be_admin
+    end
+    
+  end
+  
 end

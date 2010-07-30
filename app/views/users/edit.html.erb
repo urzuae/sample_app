@@ -1,0 +1,28 @@
+<h2>Edit User</h2>
+
+<% form_for @user do |f| %>
+  <div class="field">
+    <%= f.label :name %><br/>
+    <%= f.text_field :name %> <%= error_message_on @user, :name, :preped_text => "This field" %>
+  </div>
+  <div class="field">
+    <%= f.label :email %><br/>
+    <%= f.text_field :email %> <%= error_message_on @user, :email, :prepend_text => "Email "%>
+  </div>
+  <div class="field">
+    <%= f.label :password %><br/>
+    <%= f.password_field :password %> <%= error_message_on @user, :password, :preprend_text => "Password "%>
+  </div>
+  <div class="field">
+    <%= f.label :password_confirmation %><br/>
+    <%= f.password_field :password_confirmation %>
+  </div>
+  <div class="actions">
+    <%= f.submit "Update" %>
+  </div>
+<% end %>
+
+<div>
+  <%= gravatar_for @user %>
+  <a href="http://gravatar.com/emails">change</a>
+</div>
