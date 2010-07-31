@@ -96,7 +96,7 @@ describe UsersController do
     response.should have_tag("title", /Sign up/)
   end
   
-  describe "get 'show'" do
+  describe "GET 'show'" do
     
     before(:each) do
       @user = Factory(:user)
@@ -107,22 +107,25 @@ describe UsersController do
       get :show, :id => @user
       response.should be_success
     end
-    
     it "should have the right title" do
       get :show, :id => @user
       response.should have_tag("title", /#{@user.name}/)
     end
-    
     it "should include the user's name" do
       get :show, :id => @user
       response.should have_tag("h2", /#{@user.name}/)
     end
-    
     it "should have a profile image" do
       get :show, :id => @user
       response.should have_tag("h2>img", :class => "gravatar")
     end
-    
+    it "should show the user's microposts" do
+      mp1 = Factory(:micropost, :user => @user, :content => "Foo bar")
+      mp2 = Factory(:micropost, :user => @user, :content => "Lorem Ipsum")
+      get :show, :id => @user
+      response.should have_tag("span.content", mp1.content)
+      response.should have_tag("span.content", mp2.content)
+    end
   end
   
   describe "POST 'create'" do

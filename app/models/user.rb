@@ -16,6 +16,8 @@ class User < ActiveRecord::Base
   
   before_save :encrypt_password
   
+  has_many :microposts, :dependent => :destroy
+  
   def has_password?(submitted_password)
     encrypted_password == encrypt(submitted_password)
   end
@@ -29,6 +31,10 @@ class User < ActiveRecord::Base
   def remember_me!
     self.remember_token = encrypt("#{salt}--#{id}--#{Time.now.utc}")
     save_without_validation
+  end
+
+  def feed
+    microposts
   end
   
   private
@@ -49,4 +55,5 @@ class User < ActiveRecord::Base
   def secure_hash(string)
     Digest::SHA2.hexdigest(string)
   end
+  
 end

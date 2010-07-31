@@ -32,10 +32,14 @@ module SessionsHelper
     User.find_by_remember_token(remember_token) unless remember_token.nil?
   end
   
+  def authenticate
+    deny_access unless signed_in?
+  end
+  
   def deny_access
     store_location
     flash[:notice] = "Please sign in to access this page"
-    redirect_to signin_path
+    redirect_to(signin_path)
   end
   
   def store_location

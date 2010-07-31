@@ -1,0 +1,8 @@
+<% form_for @micropost do |f| %>
+  <div class="field">
+    <%= f.text_area :content %> <%= error_message_on @micropost, :content, :prepend_text => "It "%>
+  </div>
+  <div class="actions">
+    <%= f.submit "Submit" %>
+  </div>
+<% end %>
