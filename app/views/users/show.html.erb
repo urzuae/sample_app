@@ -17,7 +17,7 @@
       <strong>Name</strong> <%= h @user.name %><br/>
       <strong>URL</strong>  <%= link_to user_path(@user), @user %> <br/>
       <strong>Microposts</strong> <%= @user.microposts.count %> <br/  >
-      <%= link_to 'RSS Feed', microposts_url(:rss) %> <%= image_tag("rss.png", :alt => "rss", :class => "rss") %>
+      <%= link_to 'RSS Feed', microposts_url(:rss) %> <%= rss %>
       <%= render 'pages/stats' %>
     </td>
   </tr>

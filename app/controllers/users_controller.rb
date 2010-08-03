@@ -65,6 +65,10 @@ class UsersController < ApplicationController
     @users = @user.followers.paginate(:page => params[:page])
     render 'show_follow'
   end
+
+  def feeds
+    @microposts = current_user.feed
+  end
   
   private
   

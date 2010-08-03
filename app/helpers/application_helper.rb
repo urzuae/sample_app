@@ -13,4 +13,8 @@ module ApplicationHelper
   def logo
     image_tag( "logo.png", :alt => "Sample App", :class => "round" )
   end
+  
+  def rss
+    image_tag("rss.png", :alt => "rss", :class => "rss")
+  end
 end
