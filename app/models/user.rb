@@ -3,13 +3,10 @@ class User < ActiveRecord::Base
   attr_accessible :name, :email, :password, :password_confirmation
   
   EmailRegex = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/
-  
   validates_presence_of :name, :email
   validates_length_of :name, :maximum => 50
-  
   validates_format_of :email, :with => EmailRegex
   validates_uniqueness_of :email, :case_sensitive => false
-  
   validates_confirmation_of :password
   validates_presence_of :password
   validates_length_of :password, :within => 6..40
@@ -17,6 +14,12 @@ class User < ActiveRecord::Base
   before_save :encrypt_password
   
   has_many :microposts, :dependent => :destroy
+  has_many :relationships, :foreign_key => "follower_id", :dependent => :destroy
+  has_many :following, :through => :relationships, :source => :followed
+  has_many :reverse_relationships, :foreign_key => "followed_id", :class_name => "Relationship", :dependent => :destroy
+  has_many :followers, :through => :reverse_relationships, :source => :follower
+  
+  named_scope :admin, :conditions => { :admin => true }
   
   def has_password?(submitted_password)
     encrypted_password == encrypt(submitted_password)
@@ -28,13 +31,25 @@ class User < ActiveRecord::Base
     return user if user.has_password?(submitted_password)
   end
   
+  def following?(followed)
+    relationships.find_by_followed_id(followed)
+  end
+  
+  def follow!(followed)
+    relationships.create!(:followed_id => followed.id)
+  end
+  
+  def unfollow!(followed)
+    relationships.find_by_followed_id(followed).destroy
+  end
+  
   def remember_me!
     self.remember_token = encrypt("#{salt}--#{id}--#{Time.now.utc}")
     save_without_validation
   end
 
   def feed
-    microposts
+    Micropost.from_users_followed_by(self)
   end
   
   private
