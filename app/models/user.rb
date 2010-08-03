@@ -29,6 +29,7 @@ class User < ActiveRecord::Base
     user = find_by_email(email)
     return nil if user.nil?
     return user if user.has_password?(submitted_password)
+    nil
   end
   
   def following?(followed)
@@ -55,8 +56,10 @@ class User < ActiveRecord::Base
   private
   
   def encrypt_password
-    self.salt = make_salt
-    self.encrypted_password = encrypt(password)
+    unless password.nil?
+      self.salt = make_salt
+      self.encrypted_password = encrypt(password)
+    end
   end
   
   def encrypt(string)
