@@ -203,3 +203,9 @@ form.new_micropost textarea {
   height: 4em;
   margin-bottom: 0;
 }
+
+.rss {
+  height: 16px;
+  width: 16px;
+  vertical-align: top;
+}
