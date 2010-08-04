@@ -5,7 +5,7 @@ class UserMailer < ActionMailer::Base
   
   def setup_mail(user)
     @recipients = "#{user.email}"
-    @from = "no-reply@localhost.com"
+    @from = "no-reply@sampleapp.com"
     @subject = "Confirm you Sample App account"
     @body = "Activate your account. Click in the following link http://radiant-flower-29.heroku.com/activate/#{user.confirmation_token}"
   end

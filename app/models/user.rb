@@ -81,8 +81,8 @@ class User < ActiveRecord::Base
   end
   
   def confirmation
-    self.confirmation_token = nil
     self.confirm!
+    self.confirmation_token = nil
   end
   
   private
