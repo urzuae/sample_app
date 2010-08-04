@@ -1,4 +1,22 @@
 class User < ActiveRecord::Base
+  include AASM
+  
+  aasm_column :state
+  
+  aasm_initial_state :created
+  
+  aasm_state :created
+  aasm_state :registered
+  aasm_state :activated
+  
+  aasm_event :processing do
+    transitions :to => :registered, :from => [:created]
+  end
+  
+  aasm_event :confirm do
+    transitions :to => :activated, :from => [:registered]
+  end
+  
   attr_accessor :password
   attr_accessible :name, :email, :password, :password_confirmation
   
@@ -28,7 +46,8 @@ class User < ActiveRecord::Base
   def self.authenticate(email, submitted_password)
     user = find_by_email(email)
     return nil if user.nil?
-    return user if user.has_password?(submitted_password)
+    return user if user.has_password?(submitted_password) && (!user.active?)
+    nil
   end
   
   def following?(followed)
@@ -48,8 +67,22 @@ class User < ActiveRecord::Base
     save_without_validation
   end
 
+  def registered
+    self.confirmation_token = encrypt("#{id}--#{Time.now.utc}")
+    self.processing!
+  end
+
   def feed
     Micropost.from_users_followed_by(self)
+  end
+  
+  def active?
+    confirmation_token.nil?
+  end
+  
+  def confirmation
+    self.confirmation_token = nil
+    self.confirm!
   end
   
   private

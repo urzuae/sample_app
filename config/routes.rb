@@ -6,6 +6,7 @@ ActionController::Routing::Routes.draw do |map|
   map.signup '/signup', :controller => 'users', :action => 'new'
   
   map.resources :users, :member => { :following => :get, :followers => :get, :feeds => :get }
+  map.activate '/activate/:confirmation_token', :controller => 'users', :action => 'activate'
   map.resources :sessions, :only => [:new, :create, :destroy]
   map.resources :microposts, :only => [:create, :destroy, :index]
   map.resources :relationships, :only => [:create, :destroy]

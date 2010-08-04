@@ -1,5 +1,5 @@
-class UsersController < ApplicationController
-  before_filter :authenticate, :except => [:show, :new, :create]
+class UsersController < ApplicationController  
+  before_filter :authenticate, :except => [:show, :new, :create, :activate]
   before_filter :correct_user, :only => [:edit, :update]
   before_filter :admin_user, :only => [:destroy]
   
@@ -15,14 +15,29 @@ class UsersController < ApplicationController
   
   def create
     @user = User.new(params[:user])
-    if @user.save
-      sign_in @user
-      flash[:success] = "Welcome to the Sample App!"
-      redirect_to user_path(@user)
+    success = @user && @user.save
+    if success && @user.errors.empty?
+      @user.registered
+      UserMailer.deliver_signup_notification(@user)
+      flash[:success] = "Thanks for registering, you will receive an email to confirm your account."
+      redirect_to root_path
     else
       @title = "Sign up"
       @user.password = @user.password_confirmation = ""
       render 'new'
+    end
+  end
+  
+  def activate
+    user = User.find_by_confirmation_token(params[:confirmation_token]) unless params[:confirmation_token].blank?
+    if user && !user.active?
+      user.confirmation
+      flash[:success] = "Welcome to the Sample App. Your account was succesfully confirmed"
+      sign_in user
+      redirect_to root_path
+    else
+      flash[:error] = "Your account has not been validated, check your email."
+      redirect_to root_path
     end
   end
   
