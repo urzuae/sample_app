@@ -10,6 +10,10 @@
         <%= render 'pages/user_info' %>
         <%= link_to 'Friends feeds', feeds_user_url(current_user, :rss) %> <%= rss %>
         <%= render 'pages/stats' %>
+        <% form_tag microposts_path, :method => 'get' do %>
+          <%= text_field_tag :search, params[:search] %>
+          <%= submit_tag 'Search', :name => nil %>
+        <% end %>
       </td>
     </tr>
   </table>

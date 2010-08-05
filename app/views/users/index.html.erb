@@ -1,9 +1,17 @@
-<h2>All users</h2>
+<h2>Find People</h2>
 
-<%= will_paginate %>
+<% form_tag users_path, :method => 'get' do %>
+  <p>
+    <%= text_field_tag :search, params[:search]%>
+    <%= submit_tag 'Search', :name => :nil %>
+  </p>
+<% end %>
 
-<ul class="users">
+<% unless @users.nil? %>
+  <%= will_paginate %>  
+  <ul class="users">
     <%= render @users %>
-</ul>
+  </ul>
+  <%= will_paginate %>
+<% end %>
 
-<%= will_paginate %>

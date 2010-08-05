@@ -4,7 +4,9 @@ class UsersController < ApplicationController
   before_filter :admin_user, :only => [:destroy]
   
   def index
-    @users = User.paginate(:page => params[:page])
+    unless params[:search].blank?
+      @users = User.search(params[:search], params[:page])
+    end
     @title = "All users"
   end
   

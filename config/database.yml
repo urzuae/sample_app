@@ -1,15 +1,18 @@
 login: &login
-  adapter: sqlite3
+  adapter: mysql
+  encoding: utf8
   pool: 5
+  user: root
+  password: password
 
 development:
   <<: *login
-  database: db/dev.sqlite3
+  database: sample_app_development
 
 test:
   <<: *login
-  database: db/test.sqlite3
+  database: sample_app_test
 
 production:
   <<: *login
-  database: db/prod.sqlite3
+  database: sample_app

@@ -85,6 +85,10 @@ class User < ActiveRecord::Base
     self.confirmation_token = nil
   end
   
+  def self.search(search, page)
+    paginate :per_page => 10, :page => page, :conditions => ['name like ?', "%#{search}%"], :order => 'name'
+  end
+  
   private
   
   def encrypt_password

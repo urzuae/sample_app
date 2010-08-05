@@ -4,7 +4,8 @@ class MicropostsController < ApplicationController
   
   def index
     @user = current_user
-    @microposts = current_user.microposts
+    @all_microposts = current_user.microposts
+    @microposts = Micropost.search params[:search], :per_page => 10
   end
   
   def create

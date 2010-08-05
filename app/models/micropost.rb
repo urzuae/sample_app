@@ -13,4 +13,8 @@ class Micropost < ActiveRecord::Base
     followed_ids = %(SELECT followed_id FROM relationships WHERE follower_id = :user_id)
     { :conditions => ["user_id IN (#{followed_ids}) OR user_id = :user_id", { :user_id => user }] }
   end
+  
+  define_index do
+    indexes content
+  end
 end
