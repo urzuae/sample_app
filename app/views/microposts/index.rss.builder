@@ -5,7 +5,7 @@ xml.rss :version => "2.0" do
     xml.description "By #{@user.name}"
     xml.link microposts_url(:rss)
     
-    for mp in @microposts
+    for mp in @all_microposts
       xml.item do
         xml.title
         xml.description mp.content

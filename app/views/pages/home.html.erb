@@ -9,6 +9,10 @@
       <td class="sidebar round">
         <%= render 'pages/user_info' %>
         <%= render 'pages/stats' %>
+        <% form_tag microposts_path, :method => 'get' do %>
+          <%= text_field_tag :search, params[:search] %>
+          <%= submit_tag 'Search', :name => nil %>
+        <% end %>
       </td>
     </tr>
   </table>

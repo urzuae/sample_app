@@ -15,6 +15,7 @@ Rails::Initializer.run do |config|
   # config.load_paths += %W( #{RAILS_ROOT}/extras )
   config.gem 'will_paginate', :version => '2.3.12'
   config.gem 'rubyist-aasm', :version => '~> 2.0.2', :lib => 'aasm', :source => "http://gems.github.com"
+  config.gem 'thinking-sphinx', :version => '1.3.11', :lib => 'thinking_sphinx'
   
   # Specify gems that this application depends on and have them installed with rake gems:install
   # config.gem "bj"

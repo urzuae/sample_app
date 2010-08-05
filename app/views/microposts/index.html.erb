@@ -1,0 +1,20 @@
+<table class="front">
+  <tr>
+    <td class="main">
+      <h2>Find Micropost</h2>
+      <%= will_paginate %>
+      <table class="microposts">
+        <%= render @microposts %>
+      </table>
+      <%= will_paginate %>
+    </td>
+    <td class="sidebar round">
+      <%= render 'pages/user_info' %>
+      <%= render 'pages/stats' %>
+      <% form_tag microposts_path, :method => 'get' do %>
+        <%= text_field_tag :search, params[:search] %>
+        <%= submit_tag 'Search', :name => nil %>
+      <% end %>
+    </td>
+  </tr>
+</table>
