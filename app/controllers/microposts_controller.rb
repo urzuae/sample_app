@@ -5,17 +5,23 @@ class MicropostsController < ApplicationController
   def index
     @user = current_user
     @all_microposts = current_user.microposts
-    @microposts = Micropost.search params[:search], :per_page => 10
+    unless params[:search].blank?
+      @microposts = Micropost.search(params[:search], params[:page])
+    end
   end
   
   def create
-    @micropost = current_user.microposts.build(params[:micropost])
-    if @micropost.save
-      flash[:success] = "Micropost created!"
-      redirect_to root_path
+    if Micropost.is_message?(params[:micropost][:content])
+      redirect_to send_message_path(:params => params[:micropost])
     else
-      @feed_items = []
-      render 'pages/home'
+      @micropost = current_user.microposts.build(params[:micropost])
+      if @micropost.save
+        flash[:success] = "Micropost created!"
+        redirect_to root_path
+      else
+        @feed_items = []
+        render 'pages/home'
+      end
     end
   end
   def destroy

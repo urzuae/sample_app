@@ -2,11 +2,17 @@
   <tr>
     <td class="main">
       <h2>Find Micropost</h2>
-      <%= will_paginate %>
-      <table class="microposts">
-        <%= render @microposts %>
-      </table>
-      <%= will_paginate %>
+      <% if @microposts.nil? %>
+        <h4>Search field cannot be blank</h4>
+      <% elsif @microposts.empty? %>
+        <h4>No results from "<%= params[:search] %>"</h4>
+      <% else %>
+        <%= will_paginate %>
+        <table class="microposts">
+          <%= render @microposts %>
+        </table>
+        <%= will_paginate %>
+      <% end %>
     </td>
     <td class="sidebar round">
       <%= render 'pages/user_info' %>

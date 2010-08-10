@@ -1,0 +1,20 @@
+<table class="profile">
+  <tr>
+    <td class="main">
+        <%= link_to 'Sent messages', "/messages/sent_messages" %><br/>
+      <h2>Inbox</h2>
+      <% unless @user.messages.empty? %>
+        <table class="messages">
+          <%= render @messages%>
+        </table>
+      <% end %>
+    </td>
+    <td class="sidebar round">
+      <strong>Name</strong> <%= h @user.name %><br/>
+      <strong>URL</strong>  <%= link_to user_path(@user), @user %> <br/>
+      <strong>Inbox</strong> <%= @user.messages.count %> <br/>
+      <%= link_to 'RSS Feed', messages_url(:rss) %> <%= rss %>
+      <%= render 'pages/stats' %>
+    </td>
+  </tr>
+</table>

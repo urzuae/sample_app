@@ -18,11 +18,14 @@ class User < ActiveRecord::Base
   end
   
   attr_accessor :password
-  attr_accessible :name, :email, :password, :password_confirmation
+  attr_accessible :name, :username, :email, :password, :password_confirmation, :mail_option
   
   EmailRegex = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/
   validates_presence_of :name, :email
   validates_length_of :name, :maximum => 50
+  validates_presence_of :username
+  validates_uniqueness_of :username
+  validates_length_of :username, :maximum => 50
   validates_format_of :email, :with => EmailRegex
   validates_uniqueness_of :email, :case_sensitive => false
   validates_confirmation_of :password
@@ -36,6 +39,8 @@ class User < ActiveRecord::Base
   has_many :following, :through => :relationships, :source => :followed
   has_many :reverse_relationships, :foreign_key => "followed_id", :class_name => "Relationship", :dependent => :destroy
   has_many :followers, :through => :reverse_relationships, :source => :follower
+  has_many :messages
+  has_many :sent, :foreign_key => "sender_id", :class_name => "Message"
   
   named_scope :admin, :conditions => { :admin => true }
   

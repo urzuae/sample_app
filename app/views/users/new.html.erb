@@ -6,6 +6,10 @@
     <%= f.text_field :name %> <%= error_message_on @user, :name, :prepend_text => "This field " %>
   </div>
   <div class="field"> 
+    <%= f.label :username %><br/>
+    <%= f.text_field :username %> <%= error_message_on @user, :username, :prepend_text => "Username " %>
+  </div>
+  <div class="field"> 
     <%= f.label :email %><br/>
     <%= f.text_field :email %> <%= error_message_on @user, :email, :prepend_text => "Email " %>
   </div>

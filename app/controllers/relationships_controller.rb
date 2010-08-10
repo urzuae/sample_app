@@ -5,8 +5,13 @@ class RelationshipsController < ApplicationController
   def create
     current_user.follow!(@user)
     respond_to do |format|
-      format.html { redirect_to @user }
-      format.js
+      format.html do
+        UserMailer.deliver_follower_notification(@user, current_user) if @user.mail_option?
+        redirect_to @user
+      end
+      format.js do
+        UserMailer.deliver_follower_notification(@user, current_user) if @user.mail_option?
+      end
     end
   end
   

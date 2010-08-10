@@ -16,7 +16,8 @@
     <td class="sidebar round">
       <strong>Name</strong> <%= h @user.name %><br/>
       <strong>URL</strong>  <%= link_to user_path(@user), @user %> <br/>
-      <strong>Microposts</strong> <%= @user.microposts.count %> <br/  >
+      <strong>Microposts</strong> <%= @user.microposts.count %> <br/>
+      <%= link_to 'Inbox', messages_path %><br/>
       <%= link_to 'RSS Feed', microposts_url(:rss) %> <%= rss %>
       <%= render 'pages/stats' %>
     </td>

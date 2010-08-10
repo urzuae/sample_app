@@ -8,6 +8,7 @@
       </td>
       <td class="sidebar round">
         <%= render 'pages/user_info' %>
+        <%= link_to 'Inbox', messages_path %><br/>
         <%= link_to 'Friends feeds', feeds_user_url(current_user, :rss) %> <%= rss %>
         <%= render 'pages/stats' %>
         <% form_tag microposts_path, :method => 'get' do %>

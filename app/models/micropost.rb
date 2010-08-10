@@ -14,7 +14,24 @@ class Micropost < ActiveRecord::Base
     { :conditions => ["user_id IN (#{followed_ids}) OR user_id = :user_id", { :user_id => user }] }
   end
   
-  define_index do
-    indexes content
+  def self.search(search, page)
+    paginate :per_page => 10, :page => page, :conditions => ['content like ?', "%#{search}%"], :order => 'created_at'
+  end
+  
+  def self.is_message?(content)
+    message = /\A@(\w+)(.+)/
+    to_message = content.match(message)
+    if to_message.nil?
+      return false
+    else
+      user = Message.split_user(content)
+      user = User.find_by_username(user)
+      if user.nil?
+        return false
+      else
+        return true
+      end
+    end
   end
 end
+

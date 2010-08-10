@@ -10,6 +10,8 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :sessions, :only => [:new, :create, :destroy]
   map.resources :microposts, :only => [:create, :destroy, :index]
   map.resources :relationships, :only => [:create, :destroy]
+  map.resources :messages, :only => [:create, :destroy]
+  map.send_message '/send_message', :controller => 'messages', :action => :create
   map.signin '/signin', :controller => "sessions", :action => "new"
   map.signout '/signout', :controller => "sessions", :action => "destroy"
   # The priority is based upon order of creation: first created -> highest priority.
