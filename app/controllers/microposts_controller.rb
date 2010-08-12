@@ -1,6 +1,8 @@
 class MicropostsController < ApplicationController
   before_filter :authenticate, :only => [:create, :destroy]
   before_filter :authorized_user, :only => [:destroy]
+  require 'resque'
+  require 'job'
   
   def index
     @user = current_user
@@ -16,6 +18,7 @@ class MicropostsController < ApplicationController
     else
       @micropost = current_user.microposts.build(params[:micropost])
       if @micropost.save
+        Resque.enqueue(Job, params)
         flash[:success] = "Micropost created!"
         redirect_to root_path
       else

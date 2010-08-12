@@ -8,7 +8,9 @@ class MessagesController < ApplicationController
     @user = User.find_by_name(user)
     @message = @user.messages.build(:content => params[:content], :sender_id => current_user.id)
     if @message.save
-      UserMailer.deliver_message_notification(@user, current_user) if @user.mail_option?
+      if @user.mail_option?
+        Resque.enqueue(Mailer, UserMailer.deliver_message_notification)
+      end
       flash[:success] = "Your message has been sent already to #{@user.name}"
       redirect_to root_path
     else

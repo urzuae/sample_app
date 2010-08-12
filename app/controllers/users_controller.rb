@@ -7,7 +7,7 @@ class UsersController < ApplicationController
     unless params[:search].blank?
       @users = User.search(params[:search], params[:page])
     end
-    @title = "All users"
+    @title = "Find People"
   end
   
   def new
@@ -19,7 +19,7 @@ class UsersController < ApplicationController
     @user = User.new(params[:user])
     success = @user && @user.save
     if success && @user.errors.empty?
-      @user.registered
+      @user.register
       UserMailer.deliver_signup_notification(@user)
       flash[:success] = "Thanks for registering, you will receive an email to confirm your account."
       redirect_to root_path
@@ -36,7 +36,7 @@ class UsersController < ApplicationController
       user.confirmation
       flash[:success] = "Welcome to the Sample App. Your account was succesfully confirmed"
       sign_in user
-      redirect_to root_path
+      redirect_to user_path(user)
     else
       flash[:error] = "Your account has not been validated, check your email."
       redirect_to root_path

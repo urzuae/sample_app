@@ -2,16 +2,12 @@ class RelationshipsController < ApplicationController
   before_filter :authenticate
   before_filter :get_followed_user
   
+  
   def create
     current_user.follow!(@user)
     respond_to do |format|
-      format.html do
-        UserMailer.deliver_follower_notification(@user, current_user) if @user.mail_option?
-        redirect_to @user
-      end
-      format.js do
-        UserMailer.deliver_follower_notification(@user, current_user) if @user.mail_option?
-      end
+      format.html{ redirect_to @user }
+      format.js { UserMailer.deliver_follower_notification(@user.id, current_user.id) if @user.mail_option?}
     end
   end
   

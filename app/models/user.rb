@@ -25,7 +25,7 @@ class User < ActiveRecord::Base
   validates_length_of :name, :maximum => 50
   validates_presence_of :username
   validates_uniqueness_of :username
-  validates_length_of :username, :maximum => 50
+  validates_length_of :username, :maximum => 40
   validates_format_of :email, :with => EmailRegex
   validates_uniqueness_of :email, :case_sensitive => false
   validates_confirmation_of :password
@@ -72,7 +72,7 @@ class User < ActiveRecord::Base
     save_without_validation
   end
 
-  def registered
+  def register
     self.confirmation_token = encrypt("#{id}--#{Time.now.utc}")
     self.processing!
   end

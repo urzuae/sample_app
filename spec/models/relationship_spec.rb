@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Relationship do
   before(:each) do
     @follower = Factory(:user)
-    @followed = Factory(:user, :email => Factory.next(:email))
+    @followed = Factory(:user, :username => Factory.next(:username), :email => Factory.next(:email))
     @relationship = @follower.relationships.build(:followed_id => @followed.id)
   end
   it "should create a new instance given valid attributes" do

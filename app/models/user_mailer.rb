@@ -1,4 +1,6 @@
 class UserMailer < ActionMailer::Base
+  include Resque::Mailer
+  
   def signup_notification(user)
     setup_mail(user)
     @subject = "Confirm you Sample App account"
@@ -11,8 +13,12 @@ class UserMailer < ActionMailer::Base
     @body = "#{sender.name} send you a message. Check your inbox now. #{signin_url}"
   end
   
-  def follower_notification(user, sender)
-    setup_mail(user)
+  def follower_notification(user_id, sender_id)
+    user = User.find(user_id)
+    sender = User.find(sender_id)
+    
+    @recipients = "#{user.email}"
+    @from = "no-reply@sampleapp.com"
     @subject = "#{sender.name} is now following you."
     @body = "#{sender.name} is now following you. Do you want to follow #{sender.name}.\nGo now! #{signin_url}"
   end

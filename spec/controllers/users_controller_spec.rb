@@ -3,7 +3,6 @@ require 'spec_helper'
 describe UsersController do
   integrate_views
 
-
   #Delete these examples and add some real ones
   it "should use UsersController" do
     controller.should be_an_instance_of(UsersController)
@@ -23,40 +22,23 @@ describe UsersController do
       
       before(:each) do
         @user = test_sign_in(Factory(:user))
-        second = Factory(:user, :email => "another@example.com")
-        third = Factory(:user, :email => "another@example.net")
+        second = Factory(:user, :username => "second", :email => "another@example.com")
+        third = Factory(:user, :username => "third", :email => "another@example.net")
         
         @users = [@user, second, third]
         30.times do
-          @users << Factory(:user, :email => Factory.next(:email))
+          @users << Factory(:user, :username => Factory.next(:username), :email => Factory.next(:email))
         end
-        User.should_receive(:paginate).and_return(@users.paginate)      
       end
       
       it "should be successful" do
-        get :index
+        get :index, :search => ""
         response.should be_success
       end
       
       it "should have the right title" do
         get :index
-        response.should have_tag("title", /all users/i)
-      end
-      
-      it "should have an element for each user" do
-        get :index
-        @users[0..2].each do |user|
-          response.should have_tag("li", user.name)
-        end
-      end
-      
-      it "should paginate users" do
-        get :index
-        response.should have_tag("div.pagination")
-        response.should have_tag("span", "&laquo; Previous")
-        response.should have_tag("span", "1")
-        response.should have_tag("a[href=?]", "/users?page=2", "2")
-        response.should have_tag("a[href=?]", "/users?page=2", "Next &raquo;")
+        response.should have_tag("title", /find people/i)
       end
       
     end
@@ -161,28 +143,78 @@ describe UsersController do
       before(:each) do
         @attributes = {
           :name => "New User",
+          :username => "newuser",
           :email => "user@example.com",
           :password => "foobar",
           :password_confirmation => "foobar"
         }
         @user = Factory(:user, @attributes)
         User.stub!(:new).and_return(@user)
-        @user.should_receive(:save).and_return(true)
       end
       
-      it "should redirect to the user page" do
+      it "should redirect to the home page" do
         post :create, :user => @attributes
-        response.should redirect_to(user_path(@user))
+        response.should redirect_to(root_path)
       end
       
       it "should have a welcome message" do
         post :create, :user => @attributes
-        flash[:success].should =~ /welcome to the sample app/i
+        flash[:success].should =~ /thanks for registering/i
       end
       
-      it "should sign the user in" do
+      it "should not sign the user in" do
         post :create, :user => @attributes
-        controller.should be_signed_in
+        controller.should_not be_signed_in
+      end
+      
+      it "should create a confirmation_token" do
+        post :create, :user => @attributes
+        @user.confirmation_token.should_not be_nil
+      end
+      
+      it "should change state of user" do
+        post :create, :user => @attributes
+        @user.registered?.should be_true
+      end
+      
+    end
+  end
+  
+  describe "activation of user" do
+    before(:each) do
+      @attributes = {
+        :name => "New User",
+        :username => "newuser",
+        :email => "user@example.com",
+        :password => "foobar",
+        :password_confirmation => "foobar"
+      }
+      @user = Factory(:user, @attributes)
+      User.stub!(:new).and_return(@user)
+      post :create, :user => @attributes
+    end
+      
+    describe "failure" do
+      it "should redirect to home page when confirmation_token is blank" do
+        get :activate
+        response.should redirect_to(root_path)
+      end
+    end
+      
+    describe "success" do
+      before(:each) do
+        get :activate, :confirmation_token =>  @user.confirmation_token
+        @user.confirmation
+      end
+      it "should redirect to user page" do
+        response.should redirect_to(user_path(@user))
+      end
+      it "should change state of user" do
+        @user.activated?.should be_true
+      end
+      
+      it "should delete confirmation_token" do
+        @user.confirmation_token.should be_nil
       end
       
     end
@@ -243,7 +275,7 @@ describe UsersController do
     describe "success" do
       
       before(:each) do
-        @attributes = { :name => "New Name", :email => "user@example.org", :password => "barbaz", :password_confirmation => "barbaz" }
+        @attributes = { :name => "New Name", :username => "new username", :email => "user@example.org", :password => "barbaz", :password_confirmation => "barbaz" }
         @user.should_receive(:update_attributes).and_return(true)
       end
       
@@ -284,7 +316,7 @@ describe UsersController do
     describe "for signed-in users" do
       
       before(:each) do
-        wrong_user = Factory(:user, :email => "use@example.net")
+        wrong_user = Factory(:user, :username => "othername", :email => "use@example.net")
         test_sign_in(wrong_user)
       end
       
@@ -318,7 +350,7 @@ describe UsersController do
     
     describe "as an admin user" do
       before(:each) do
-        admin = Factory(:user, :email => "admin@example.com", :admin => true)
+        admin = Factory(:user, :username => Factory.next(:username), :email => "admin@example.com", :admin => true)
         test_sign_in(admin)
         User.should_receive(:find).with(@user).and_return(@user)
         @user.should_receive(:destroy).and_return(@user)
@@ -345,7 +377,7 @@ describe UsersController do
     describe "when signed in" do
       before(:each) do
         @user = test_sign_in(Factory(:user))
-        @other_user = Factory(:user, :email => Factory.next(:email))
+        @other_user = Factory(:user, :username => Factory.next(:username), :email => Factory.next(:email))
         @user.follow!(@other_user)
       end
       it "should show user following" do

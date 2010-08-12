@@ -4,12 +4,13 @@ describe User do
   before(:each) do
     @attributes = { 
       :name => "user",
+      :username => "username",
       :email => "user@name.com",
       :password => "foobar",
       :password_confirmation => "foobar"
     }
   end
-
+  
   it "should create a new instance given valid attributes" do
     User.create!(@attributes)
   end
@@ -17,6 +18,11 @@ describe User do
   it "should require a name" do
     user_name = User.new(@attributes.merge(:name => ""))
     user_name.should_not be_valid
+  end
+  
+  it "should require a username" do
+    user_username = User.new(@attributes.merge(:username => ""))
+    user_username.should_not be_valid
   end
   
   it "should require an email address" do
@@ -28,6 +34,12 @@ describe User do
     long_name = "a" * 51
     user_name = User.new(@attributes.merge(:name => long_name))
     user_name.should_not be_valid
+  end
+  
+  it "should reject usernames that are too long" do
+    long_username = "a" * 41
+    user_username = User.new(@attributes.merge(:username => long_username))
+    user_username.should_not be_valid
   end
   
   it "should accept valid email addresses" do
@@ -46,9 +58,15 @@ describe User do
     end
   end
   
-  it "should reject dupicate email addresses" do
-    User.create!(@attributes)
-    user_duplicate = User.new(@attributes)
+  it "should reject duplicate email addresses" do
+    User.create!(@attributes.merge(:email => "user@name.com"))
+    user_duplicate = User.new(@attributes.merge(:email => "user@name.com"))
+    user_duplicate.should_not be_valid
+  end
+  
+  it "should reject duplicate username" do
+    User.create!(@attributes.merge(:username => "user_name"))
+    user_duplicate = User.new(@attributes.merge(:username => "user_name"))
     user_duplicate.should_not be_valid
   end
   
@@ -93,28 +111,23 @@ describe User do
       it "should be true if the password match" do
         @user.has_password?(@attributes[:password]).should be_true
       end
-      
       it "should be false if the password do not match" do
         @user.has_password?("failed").should be_false
       end
       
       describe "authenticate method" do
-        
         it "should return nil on email/password mismatch" do
           user_wrong = User.authenticate(@attributes[:email], "wrongpass")
           user_wrong.should be_nil
         end
-        
         it "should return nil for an email address with no user" do
           user_none = User.authenticate("bar@foo.com", @attributes[:password])
           user_none.should be_nil
         end
-        
         it "should return the user on email/passwors match" do
           user_match = User.authenticate(@attributes[:email], @attributes[:password])
           user_match.should == @user
         end
-        
       end
     end
   end
@@ -243,4 +256,56 @@ describe User do
       @followed.followers.include?(@user).should be_true
     end
   end
+  
+  describe "act as state machine" do
+    
+    describe "states" do
+      before(:each) do
+        @user = User.create!(@attributes)
+      end
+      it "should respond to state method" do
+        @user.should respond_to(:state)
+      end
+      it "should respont to created when a user is created" do
+        @user.created?.should be_true
+      end
+      it "should respond to a processing method" do
+        @user.should respond_to(:processing)
+      end
+      it "should transition from created to registered" do
+        @user.processing
+        @user.registered?.should be_true
+      end
+      it "should respond to a confirm method" do
+        @user.should respond_to(:confirm)
+      end
+      it "should transition from registered to activated" do
+        @user.processing
+        @user.confirm
+        @user.activated?.should be_true
+      end
+    end
+  end
+  
+  describe "registration process" do
+    before(:each) do
+      @user = User.create(@attributes)
+    end
+    it "should respond to a register method" do
+      @user.should respond_to(:register)
+    end
+    it "should change user state" do
+      @user.register
+      @user.state.should == "registered"
+    end
+    it "should respond to a confirmation method" do
+      @user.should respond_to(:confirmation)
+    end
+    it "should change user state" do
+      @user.register
+      @user.confirmation
+      @user.state.should == "activated"
+    end
+  end
+  
 end
