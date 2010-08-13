@@ -46,3 +46,5 @@ Rails::Initializer.run do |config|
   # config.i18n.default_locale = :de
   
 end
+
+ActionMailer::Base.delivery_method = :sendmail

@@ -1,4 +1,5 @@
 class UsersController < ApplicationController  
+  require 'user_mailer'
   before_filter :authenticate, :except => [:show, :new, :create, :activate]
   before_filter :correct_user, :only => [:edit, :update]
   before_filter :admin_user, :only => [:destroy]
@@ -20,7 +21,7 @@ class UsersController < ApplicationController
     success = @user && @user.save
     if success && @user.errors.empty?
       @user.register
-      UserMailer.deliver_signup_notification(@user)
+      UserMailer.deliver_signup_notification(@user.id)
       flash[:success] = "Thanks for registering, you will receive an email to confirm your account."
       redirect_to root_path
     else
