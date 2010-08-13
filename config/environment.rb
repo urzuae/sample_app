@@ -18,7 +18,6 @@ Rails::Initializer.run do |config|
   config.gem 'will_paginate', :version => '2.3.12'
   config.gem 'rubyist-aasm', :version => '~> 2.0.2', :lib => 'aasm', :source => "http://gems.github.com"
   config.gem 'resque'
-  config.gem 'resque_mailer'
   
   # Specify gems that this application depends on and have them installed with rake gems:install
   # config.gem "bj"

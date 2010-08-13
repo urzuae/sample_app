@@ -1,10 +1,13 @@
+require 'resque_mailer'
 class UserMailer < ActionMailer::Base
   include Resque::Mailer
   
-  def signup_notification(user)
-    setup_mail(user)
+  def signup_notification(user_id)
+    user = User.find(user_id)
+    @recipients = "#{user.email}"
+    @from = "noreply@sampleapp.com"
     @subject = "Confirm you Sample App account"
-    @body = "Activate your account. Click in the following link, http://radiant-flower-29.heroku.com/activate/#{user.confirmation_token}"
+    @body = "Activate your account. Click in the following link, #{activate_url(:confirmation_token => user.confirmation_token)}"
   end
   
   def message_notification(user, sender)

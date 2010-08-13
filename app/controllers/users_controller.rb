@@ -20,7 +20,7 @@ class UsersController < ApplicationController
     success = @user && @user.save
     if success && @user.errors.empty?
       @user.register
-      UserMailer.deliver_signup_notification(@user)
+      UserMailer.deliver_signup_notification(@user.id)
       flash[:success] = "Thanks for registering, you will receive an email to confirm your account."
       redirect_to root_path
     else
